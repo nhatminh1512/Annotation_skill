@@ -21,7 +21,7 @@ This skill is KEEP/DROP, naming, and placement. It does not depend on a particul
 7. Load `references/patterns.md`. Map each KEEP to one closed `parameter` and one `specified_parameter`.
 8. Load `references/locate.md`. Stamp one numbered circle per KEEP on a **copy** of the file.
 9. If the page has geometry and Drawing is empty, look again (including faint and rotated text). If still none, leave Drawing empty and continue. Do not fail the packet.
-10. If an inspection or FAI sheet template is in the task, load `references/report-columns.md` and fill only the characteristic columns.
+10. If an inspection or FAI sheet template is in the task, load `references/report-columns.md` and fill only the characteristic columns (A–N for CCP; equivalent fields for OTS).
 
 When headers do not match any sample, still do steps 2–8. Do not memorize a field list from a previous packet.
 
@@ -46,7 +46,7 @@ A number is not automatically KEEP. An unseen row label is not automatically DRO
 Classify each block by role, then apply the tests above.
 
 | Region | How you recognize it | What you look for |
-|---|---|---|
+|--------|----------------------|-------------------|
 | Title block | Bottom or corner; TITLE, DOC NO, REV, SIZE, SHEET | KEEP the human part title / short name. DROP doc no, rev, size, sheet, names, dates |
 | Identity | Manufacturer, vendor, part number, customer PN | KEEP filled names and part numbers. DROP empty alternate / no-substitute lines |
 | Requirements list | Label + value rows or Parameter / Specification / Standard columns | KEEP each value that states a real requirement or a cited standard. DROP the label column and NA values |
@@ -116,13 +116,17 @@ Every printed dimension is a candidate. Merge a number with stacked `+` / `−` 
 
 Captions that are only the name of a tabulated variable (`LENGTH`, `THREAD LENGTH`, `SEE TABLE`) are pointers → DROP.
 
-## Closed enums
+## Closed enums (updated for OQA-73965)
 
-Parameter: Angle, Basic, Bevel, Chamfer, Countersink, Depth, Diameter, Dimension, Finish, Hardness, GDT-Angularity, GDT-Circularity, GDT-Concentricity, GDT-Cylindricity, GDT-Flatness, GDT-Parallelism, GDT-Perpendicularity, GDT-Position, GDT-Profile of a Line, GDT-Profile of a Surface, GDT-Runout, GDT-Total Runout, GDT-Straightness, GDT-Symmetry, Length, Manufacturer, Manufacturer Part Number, Material, Note, Pitch, Radius, Roughness, Thread, Title, Width, Other
+**Parameter** (match template dropdown as closely as possible; use `Others` only when no match):
 
-Location: Title, Manufacturer, Manufacturer Part Number, Drawing, Notes
+Angle, Average, Chamfer, Chemical Composition, Circularity, Concentration, Concentricity, Conductance, Conductivity, Coplanarity, Count, Counterbore, Countersink, Current, Current Density, Current Ratio, Density, Depth, Diameter, Dielectric Constant, Dielectric Loss, Dielectric Thickness, Distance, Elastic Modulus, Energy Density, Flatness, Flow Accuracy Percentage, Force, Frequency, Hardness, Height, Impedance, Inductance, Leak Rate, Line Profile, Linear Dimension, Linearity, Loss Tangent, Magnification, Mean, Median, Notes from Drawing, Parallelism, Particle Count, Perpendicularity, Planarity, Porosity, Position, Position Diametric, Position Spherical, Power, Power Density, Pressure, Purity, Radius, Resistivity Volume, Resistance, Resistivity, Standard Deviation, Surface Finish, Surface Profile, Surface Roughness, Temperature, Thermal Uniformity, Thickness, Time, Total Runout, Thread, Voltage, Weight, Width, Straightness, Cylindricity, Angularity, Symmetry, Circular runout, Spherical Diameter, Spherical Radius, Slot Length, Slot Width, Others (See Notes/Datum)
 
-Unknown parameter → `Other`. Unknown location → `Drawing`. Do not invent labels.
+**Location**: Title, Manufacturer, Manufacturer Part Number, Drawing, Notes
+
+**Material Condition**: RFS (default), MMC Hole, MMC Shaft, LMC Hole, LMC Shaft
+
+Unknown parameter → `Others`. Unknown location → `Drawing`. Do not invent labels.
 
 `specified_parameter` is the inspector-facing name (Specified Parameter cell), not the closed `parameter` enum. Vocabulary and naming rules live in `references/patterns.md`.
 
@@ -142,7 +146,7 @@ Return one JSON object per page, then stamp the marked copy. `bbox` is `[x0, y0,
       "parameter": "Diameter",
       "specified_parameter": "Head diameter",
       "notes_datum": null,
-      "material_condition": null,
+      "material_condition": "RFS",
       "unit": "mm",
       "stat": null,
       "nominal": "6.3",
@@ -153,15 +157,3 @@ Return one JSON object per page, then stamp the marked copy. `bbox` is `[x0, y0,
     }
   ]
 }
-```
-
-`balloon` numbers are 1…N across pages. `unit` only if printed on that fact (`mm`, `in`, `deg`, `Ra`). A notes line “dimensions in mm” does not set `unit` on a size that prints no unit. `material_condition` is MMC / LMC / RFS only if shown.
-
-## Done
-
-- Source path ≠ marked path
-- Circle count matches KEEP items; numbers are 1…N across pages
-- JSON uses the closed enums; invented ids and guessed coordinates that cover the wrong glyphs are dropped
-- Chrome, NA rows, `SEE TABLE` pointers, and repeated tabulated body cells are not circled
-- Two circles were not drawn for one size
-- Cover-sheet Excel rows were not written
